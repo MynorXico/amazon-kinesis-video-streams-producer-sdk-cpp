@@ -1149,7 +1149,9 @@ gst_kvs_sink_handle_buffer (GstCollectPads * pads,
         }
         buf->pts += data->producer_start_time - data->first_pts;
     }
-
+    if (CHECK_FRAME_FLAG_KEY_FRAME(kinesis_video_flags)) {
+        data->kinesis_video_stream->putEventMetadata(STREAM_EVENT_TYPE_NOTIFICATION | STREAM_EVENT_TYPE_IMAGE_GENERATION, NULL);
+    }
     put_frame(data->kinesis_video_stream, info.data, info.size,
               std::chrono::nanoseconds(buf->pts),
               std::chrono::nanoseconds(buf->dts), kinesis_video_flags, track_id, data->frame_count);
